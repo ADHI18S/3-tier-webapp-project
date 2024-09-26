@@ -1,5 +1,5 @@
 resource "aws_vpc" "my-vpc" {
-  cidr_block       = "10.0.0.0/16"
+  cidr_block       = var.cidr_block[0]
   instance_tenancy = "default"
 
   tags = {
@@ -9,7 +9,7 @@ resource "aws_vpc" "my-vpc" {
 
 resource "aws_subnet" "my-vpc-sub-pub" {
   vpc_id     = aws_vpc.my-vpc.id
-  cidr_block = "10.0.24.0/24"
+  cidr_block = var.cidr_block[1]
   availability_zone = var.availability_zones[0]
 
   tags = {
@@ -20,7 +20,7 @@ resource "aws_subnet" "my-vpc-sub-pub" {
 
 resource "aws_subnet" "my-vpc-sub-pvt" {
   vpc_id     = aws_vpc.my-vpc.id
-  cidr_block = "10.0.26.0/24"
+  cidr_block = var.cidr_block[2]
   availability_zone = var.availability_zones[1]
 
   tags = {
@@ -38,7 +38,7 @@ resource "aws_route_table" "my-vpc-rt-pub" {
   vpc_id = aws_vpc.my-vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.cidr_block[3]
     gateway_id = aws_internet_gateway.igw.id
   }
 
@@ -72,7 +72,7 @@ resource "aws_route_table" "my-vpc-rt-pvt" {
   vpc_id = aws_vpc.my-vpc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.cidr_block[4]
     gateway_id = aws_nat_gateway.my-vpc-nat.id
   }
 
@@ -156,3 +156,8 @@ resource "aws_instance" "my-vpc-instance2" {
     Name = "3_tier_pvt-webapp"
   }
 }
+
+
+
+
+#kindly wrote terraform.tfvars file to provide the needed value
