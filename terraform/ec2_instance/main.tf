@@ -1,6 +1,3 @@
-
-
-
 resource "aws_vpc" "my-vpc" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
@@ -13,7 +10,7 @@ resource "aws_vpc" "my-vpc" {
 resource "aws_subnet" "my-vpc-sub-pub" {
   vpc_id     = aws_vpc.my-vpc.id
   cidr_block = "10.0.24.0/24"
-  availability_zone = "ap-south-1a"
+  availability_zone = var.availability_zones[0]
 
   tags = {
     Name = "my-vpc-sub-pub"
@@ -24,7 +21,7 @@ resource "aws_subnet" "my-vpc-sub-pub" {
 resource "aws_subnet" "my-vpc-sub-pvt" {
   vpc_id     = aws_vpc.my-vpc.id
   cidr_block = "10.0.26.0/24"
-  availability_zone = "ap-south-1b"
+  availability_zone = var.availability_zones[1]
 
   tags = {
     Name = "my-vpc-sub-pvt"
@@ -135,11 +132,11 @@ resource "aws_security_group" "my-vpc-pub_sg" {
 }
 
 resource "aws_instance" "my-vpc-instance" {
-  ami           = "ami-0522ab6e1ddcc7055"
-  instance_type = "t2.micro"
+  ami           = var.ami[0]
+  instance_type = var.instance_type[0]
   subnet_id = aws_subnet.my-vpc-sub-pub.id
   vpc_security_group_ids = [ aws_security_group.my-vpc-pub_sg.id]
-  key_name = "network"
+  key_name = var.key_name[0]
   associate_public_ip_address = true
 
   tags = {
@@ -147,12 +144,12 @@ resource "aws_instance" "my-vpc-instance" {
   }
 }
 
-resource "aws_instance" "my-vpc-instance" {
-  ami           = "ami-0522ab6e1ddcc7055"
-  instance_type = "t2.micro"
+resource "aws_instance" "my-vpc-instance2" {
+  ami           = var.ami[1]
+  instance_type = var.instance_type[1]
   subnet_id = aws_subnet.my-vpc-sub-pvt.id
   vpc_security_group_ids = [ aws_security_group.my-vpc-pub_sg.id]
-  key_name = "network"
+  key_name = var.key_name[1]
   associate_public_ip_address = false
 
   tags = {
